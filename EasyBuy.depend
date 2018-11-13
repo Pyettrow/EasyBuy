@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1542150452 source:c:\users\sleeping\desktop\easybuy\easybuy\main.c
+	<stdio.h>
+	<stdlib.h>
+	<conio.h>
+	<locale.h>
+
