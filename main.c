@@ -88,7 +88,7 @@ int main() {
 			case 3:
 				{
 					printf("\t\tEasyBuy - Compra\n\n");
-					//Informações para a compra
+					//Informações para realizar a compra
 					printf("\t\t");
 					break;
 				}
