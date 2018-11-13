@@ -123,7 +123,7 @@ int main() {
 				}
 			default:
 				{
-					printf("Opção inválida!");
+					printf("Opção inválida!!");
 					break;
 				}
 		}
