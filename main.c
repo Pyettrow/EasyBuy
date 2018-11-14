@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<conio.h>
 #include<locale.h>
-/*#include<iostream>*/
+
 
 typedef struct Fornecedores{
 	int codFornecedores;
