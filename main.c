@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<conio.h>
 #include<locale.h>
-
+//https://github.com/Pyettrow/EasyBuy/invitations
 
 typedef struct Fornecedores{
 	int codFornecedores;
