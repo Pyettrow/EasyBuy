@@ -2,8 +2,8 @@
 #include<stdlib.h>
 #include<conio.h>
 #include<locale.h>
-//https://github.com/Pyettrow/EasyBuy/invitations
 
+//Declaração de Struct
 typedef struct Fornecedores{
 	int codFornecedores;
 	char nomeFornecedores[50];
@@ -16,17 +16,22 @@ typedef struct Produtos{
 	int codProdutos;
 	char nomeProdutos[50];
 	float precoUni;
-	int qtdComprada;
+	float qtdComprada;
 	struct Produtos* next;
 }Produtos;
 
 //Declaração das funções
+//Funções para cadastro
 void cadastroForn();
 void cadastroProd();
 void listaFornecedor();
 void listaProduto();
 void alterarForn();
 void alterarProd();
+
+//Funções para compras
+void compra();
+void listaCompra(int escFor, int escProd, int escQtde, int func);//Func = 1 para visualizar| Func = 0 para somar quantidade comprada
 
 
 Fornecedores* headFor = NULL;
@@ -69,7 +74,7 @@ int main() {
 					}
 					break;
 				}
-			case 2://Alterações de cliente e produtos
+			case 2://Alterar de cliente e produtos
 				{
 					printf("\t\tEasyBuy - Alterações\n\n");
 					printf("\t\t1) Alterar Fornecedor\n");
@@ -85,14 +90,14 @@ int main() {
 					}
 					break;
 				}
-			case 3:
+			case 3://Comprar produto
 				{
 					printf("\t\tEasyBuy - Compra\n\n");
-					//Informações para realizar a compra
+					compra();
 					printf("\t\t");
 					break;
 				}
-			case 4:
+			case 4://Visualizar produto e fornecedor
 				{
 					printf("\t\tEasyBuy - Listas\n\n");
 					printf("\t\t1) Visualizar fornecedores\n");
@@ -101,7 +106,9 @@ int main() {
 					if(esc == 1){
 						listaFornecedor();
 					}else if(esc == 2){
+					    system("cls");
 						listaProduto();
+						system("pause");
 					}else{
 						printf("Opção inválida!");
 					}
@@ -141,7 +148,7 @@ void cadastroForn(){
 	getchar();
 	gets(temp->nomeFornecedores);
 	temp->codFornecedores = cont;
-	printf("\t\tO codigo do fornecedo é: %i\n",temp->codFornecedores);
+	printf("\t\tO codigo do fornecedo é: %d\n",temp->codFornecedores);
 	temp->next = NULL;
 	if(headFor == NULL){
 		headFor = temp;
@@ -170,7 +177,7 @@ void cadastroProd(){
 	printf("\t\tInforme o preço unitário: \n\t\t");
 	scanf("%f",&temp->precoUni);
 	printf("\t\tInforme o código do fornecedor desse produto: \n\t\t");
-	scanf("%i",&temp->codFornecedorProd);
+	scanf("%d",&temp->codFornecedorProd);
 	temp->next = NULL;
 	if(headProd == NULL){
 		headProd = temp;
@@ -193,6 +200,7 @@ void listaFornecedor(){
     for(temp = headFor; temp != NULL ; temp=temp->next){
         printf("\t\tCod: %d \n",temp->codFornecedores);
         printf("\t\tNome: %s \n",temp->nomeFornecedores);
+        printf("\t\tQtde de compras: %d\n",temp->totalCompras);
         printf("\t\t---------------\n");
     }
     system("pause");
@@ -200,16 +208,16 @@ void listaFornecedor(){
 
 //Função para visualizar produtos
 void listaProduto(){
-	system("cls");
 	Produtos* temp;
     for(temp = headProd; temp != NULL ; temp=temp->next){
+        printf("\t\t-----------------------\n");
         printf("\t\tCod: %d \n",temp->codProdutos);
         printf("\t\tNome: %s \n",temp->nomeProdutos);
         printf("\t\tPreço: R$%.2f \n",temp->precoUni);
-        printf("\t\tCódigo do fornecedor do produto: %i \n",temp->codFornecedorProd);
-        printf("\t\t---------------\n");
+        printf("\t\tQtde comprada: %d \n",temp->qtdComprada);
+        printf("\t\tCod. do fornecedor: %d \n",temp->codFornecedorProd);
+        printf("\t\t-----------------------\n");
     }
-    system("pause");
 }
 
 //Função para alterar fornecedor
@@ -250,4 +258,58 @@ void alterarProd(){
     }
     system("pause");
 }
+
+//Função para compra
+void compra(){
+    Fornecedores *tempFornec;
+    Produtos *tempProd;
+    int totalComp = tempFornec->totalCompras;
+    int escFor = 0, escProd = 0;
+    float escQtde = 0;
+    printf("\n\t\tInforme o codigo do fornecedor\n\t\tpara realizar a compra: ");
+    scanf("%d",&escFor);
+    totalComp++;
+    //tempFornec->totalCompras = totalComp;
+    listaCompra(escFor, 0, 0, 1);
+    printf("\t\tInforme o codigo do produto que deseja comprar: ");
+    scanf("%d",&escProd);
+    printf("\t\tQtde: ");
+    scanf("%f",&escQtde);
+    listaCompra(escFor, escProd, escQtde, 0);
+
+}
+
+//Visualizar produto conforme fornecedor & Soma quantidade comprada do produto
+void listaCompra(int escFor, int escProd, int escQtde, int func){
+    Produtos* temp;
+    if(func == 1){
+        for(temp = headProd; temp != NULL ; temp=temp->next){
+            if(escFor == temp->codFornecedorProd){
+                printf("\t\t-----------------------\n");
+                printf("\t\tCod: %d \n",temp->codProdutos);
+                printf("\t\tNome: %s \n",temp->nomeProdutos);
+                printf("\t\tPreço: R$%.2f \n",temp->precoUni);
+                printf("\t\tCod. do fornecedor: %d \n",temp->codFornecedorProd);
+                printf("\t\t-----------------------\n");
+            }
+        }
+    }else{
+        for(temp = headProd; temp != NULL ; temp=temp->next){
+            if((escFor == temp->codFornecedorProd) && (escProd == temp->codProdutos)){
+                temp->qtdComprada = temp->qtdComprada + escQtde;
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 
