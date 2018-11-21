@@ -31,7 +31,9 @@ void alterarProd();
 
 //Funções para compras
 void compra();
-void listaCompra(int escFor, int escProd, int escQtde, int func);//Func = 1 para visualizar| Func = 0 para somar quantidade comprada
+void visuProdFornec(int escFor, int escProd, int escQtde, int func);//Func = 1 para visualizar| Func = 0 para somar quantidade comprada
+int  somaTotalCompra(int escFor);
+int  somaQuantidadeComprada(int escFor, int escProd, int escQtde);
 
 
 Fornecedores* headFor = NULL;
@@ -268,36 +270,70 @@ void compra(){
     float escQtde = 0;
     printf("\n\t\tInforme o codigo do fornecedor\n\t\tpara realizar a compra: ");
     scanf("%d",&escFor);
-    totalComp++;
-    //tempFornec->totalCompras = totalComp;
-    listaCompra(escFor, 0, 0, 1);
+    escFor = somaTotalCompra(escFor);
+    visuProdFornec(escFor, escProd, escQtde, 0);
     printf("\t\tInforme o codigo do produto que deseja comprar: ");
     scanf("%d",&escProd);
     printf("\t\tQtde: ");
     scanf("%f",&escQtde);
-    listaCompra(escFor, escProd, escQtde, 0);
-
+    escProd = somaQuantidadeComprada(escFor, escProd, escQtde);
+    printf("\n\t\tCompra realizada com sucesso!\n\t\t");
+    system("pause");
 }
 
-//Visualizar produto conforme fornecedor & Soma quantidade comprada do produto
-void listaCompra(int escFor, int escProd, int escQtde, int func){
-    Produtos* temp;
-    if(func == 1){
-        for(temp = headProd; temp != NULL ; temp=temp->next){
-            if(escFor == temp->codFornecedorProd){
-                printf("\t\t-----------------------\n");
-                printf("\t\tCod: %d \n",temp->codProdutos);
-                printf("\t\tNome: %s \n",temp->nomeProdutos);
-                printf("\t\tPreço: R$%.2f \n",temp->precoUni);
-                printf("\t\tCod. do fornecedor: %d \n",temp->codFornecedorProd);
-                printf("\t\t-----------------------\n");
+//Função para somar total compra do fornecedor
+int somaTotalCompra(int escFor){
+    Fornecedores* temp;
+    int saida = 0;
+    while(saida != 1){
+        for(temp = headFor; temp != NULL ; temp=temp->next){
+            if(temp->codFornecedores == escFor){
+                temp->totalCompras = temp->totalCompras + 1;
+                saida = 1;
+            }else{
+                printf("\n\t\tFornecedor inexistente\n\t\tInforme um fonecedor válido: \n\t\t");
+                scanf("%d",&escFor);
             }
         }
-    }else{
+    }
+    return escFor;
+}
+
+//Função para somar quanitdade de compra e validar produto
+int  somaQuantidadeComprada(int escFor, int escProd, int escQtde){
+    Produtos *temp;
+    int aux = 0, tamLista = 0, naoEx = 0, saida = 0;
+    while(saida != 1){
         for(temp = headProd; temp != NULL ; temp=temp->next){
             if((escFor == temp->codFornecedorProd) && (escProd == temp->codProdutos)){
-                temp->qtdComprada = temp->qtdComprada + escQtde;
+                aux = temp->qtdComprada;
+                aux = aux + escQtde;
+                temp->qtdComprada = aux;
+                saida = 1;
+            }else{
+                naoEx++;
             }
+        tamLista++;
+        }
+        if(naoEx == tamLista){
+            printf("Produto inexistente!\n\t\tInforme um produto válido: ");
+            scanf("%d",&escProd);
+        }
+    }
+    return escProd;
+}
+
+//Visualiza produto conforme fonecedor
+void visuProdFornec(int escFor, int escProd, int escQtde, int func){
+    Produtos* temp;
+    for(temp = headProd; temp != NULL ; temp=temp->next){
+        if(escFor == temp->codFornecedorProd){
+            printf("\t\t-----------------------\n");
+            printf("\t\tCod: %d \n",temp->codProdutos);
+            printf("\t\tNome: %s \n",temp->nomeProdutos);
+            printf("\t\tPreço: R$%.2f \n",temp->precoUni);
+            printf("\t\tCod. do fornecedor: %d \n",temp->codFornecedorProd);
+            printf("\t\t-----------------------\n");
         }
     }
 }
