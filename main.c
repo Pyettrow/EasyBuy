@@ -24,6 +24,7 @@ typedef struct Produtos{
 //Funções para cadastro
 void cadastroForn();
 void cadastroProd();
+int verificaFornce(int escFornec);
 void listaFornecedor();
 void listaProduto();
 void alterarForn();
@@ -151,6 +152,7 @@ void cadastroForn(){
 	gets(temp->nomeFornecedores);
 	temp->codFornecedores = cont;
 	printf("\t\tO codigo do fornecedo é: %d\n",temp->codFornecedores);
+	temp->totalCompras = 0;
 	temp->next = NULL;
 	if(headFor == NULL){
 		headFor = temp;
@@ -169,17 +171,18 @@ void cadastroForn(){
 //Função para cadastrar produto
 void cadastroProd(){
 	static int cont = 1;
+	int escFornec = 0;
 	Produtos *temp;
 	temp = (Produtos*)malloc(sizeof(Produtos));
 	temp->codProdutos = cont;
-	printf("\t\tCodigo do produto é: %d\n",temp->codProdutos);
 	printf("\t\tInforme o nome do produto: \n\t\t");
 	getchar();
 	gets(temp->nomeProdutos);
 	printf("\t\tInforme o preço unitário: \n\t\t");
 	scanf("%f",&temp->precoUni);
 	printf("\t\tInforme o código do fornecedor desse produto: \n\t\t");
-	scanf("%d",&temp->codFornecedorProd);
+	scanf("%d",&escFornec);
+	temp->codFornecedorProd = verificaFornce(escFornec);
 	temp->next = NULL;
 	if(headProd == NULL){
 		headProd = temp;
@@ -190,9 +193,27 @@ void cadastroProd(){
 		}
 		aux->next = temp;
 	}
+	printf("\t\tCodigo do produto é: %d\n",temp->codProdutos);
 	cont++;
 	printf("\t\t");
 	system("pause");
+}
+
+//Procurar se fornecedor existe
+int verificaFornce(int escFornec){
+    Fornecedores *temp;
+    int saida = 0;
+    while(saida != 1){
+        for(temp = headFor; temp != NULL ; temp=temp->next){
+            if(escFornec == temp->codFornecedores){
+                saida = 1;
+            }else{
+                printf("\t\tFornecedor não cadastrado\n\t\tInforme um fornecedor existente: ");
+                scanf("%d",&escFornec);
+            }
+        }
+    }
+    return escFornec;
 }
 
 //Função para visualizar fornecedor
@@ -216,7 +237,7 @@ void listaProduto(){
         printf("\t\tCod: %d \n",temp->codProdutos);
         printf("\t\tNome: %s \n",temp->nomeProdutos);
         printf("\t\tPreço: R$%.2f \n",temp->precoUni);
-        printf("\t\tQtde comprada: %d \n",temp->qtdComprada);
+        printf("\t\tQtde comprada: %.2f \n",temp->qtdComprada);
         printf("\t\tCod. do fornecedor: %d \n",temp->codFornecedorProd);
         printf("\t\t-----------------------\n");
     }
@@ -265,7 +286,6 @@ void alterarProd(){
 void compra(){
     Fornecedores *tempFornec;
     Produtos *tempProd;
-    int totalComp = tempFornec->totalCompras;
     int escFor = 0, escProd = 0;
     float escQtde = 0;
     printf("\n\t\tInforme o codigo do fornecedor\n\t\tpara realizar a compra: ");
@@ -284,11 +304,14 @@ void compra(){
 //Função para somar total compra do fornecedor
 int somaTotalCompra(int escFor){
     Fornecedores* temp;
+    int totalComp = 0;
     int saida = 0;
     while(saida != 1){
         for(temp = headFor; temp != NULL ; temp=temp->next){
             if(temp->codFornecedores == escFor){
-                temp->totalCompras = temp->totalCompras + 1;
+                totalComp = temp->totalCompras;
+                totalComp++;
+                temp->totalCompras = totalComp;
                 saida = 1;
             }else{
                 printf("\n\t\tFornecedor inexistente\n\t\tInforme um fonecedor válido: \n\t\t");
@@ -302,7 +325,8 @@ int somaTotalCompra(int escFor){
 //Função para somar quanitdade de compra e validar produto
 int  somaQuantidadeComprada(int escFor, int escProd, int escQtde){
     Produtos *temp;
-    int aux = 0, tamLista = 0, naoEx = 0, saida = 0;
+    int tamLista = 0, naoEx = 0, saida = 0;
+    float aux = 0;
     while(saida != 1){
         for(temp = headProd; temp != NULL ; temp=temp->next){
             if((escFor == temp->codFornecedorProd) && (escProd == temp->codProdutos)){
@@ -316,7 +340,7 @@ int  somaQuantidadeComprada(int escFor, int escProd, int escQtde){
         tamLista++;
         }
         if(naoEx == tamLista){
-            printf("Produto inexistente!\n\t\tInforme um produto válido: ");
+            printf("\t\tProduto inexistente!\n\t\tInforme um produto válido: ");
             scanf("%d",&escProd);
         }
     }
