@@ -48,24 +48,30 @@ int main() {
 
 	int esc = 0;
 
-	printf("\t\tBem-Vindo ao EasyBuy\n\n");
 	while(esc !=5 ){
-		//Printando o MENU
-		printf("\t\t1) Cadastros\n");
-		printf("\t\t2) Alterações\n");
-		printf("\t\t3) Comprar\n");
-		printf("\t\t4) Visualizar listas\n");
-		printf("\t\t5) Relatório\n");
-		printf("\t\t6) Sair\n");
+        //Printando o MENU
+        printf("\t\t|---------------------------|\n");
+        printf("\t\t|   Bem-Vindo ao EasyBuy    |\n");
+        printf("\t\t|---------------------------|\n");
+		printf("\t\t| 1) Cadastros.             |\n");
+		printf("\t\t| 2) Alterações.            |\n");
+		printf("\t\t| 3) Comprar.               |\n");
+		printf("\t\t| 4) Visualizar listas.     |\n");
+		printf("\t\t| 5) Relatório.             |\n");
+		printf("\t\t| 6) Sair.                  |\n");
+		printf("\t\t|---------------------------|\n\n");
 		printf("\t\t");
 		scanf("%d",&esc);
 		system("cls");
 		switch(esc){
 			case 1: //Cadastro de cliente e produto
 				{
-					printf("\t\tEasyBuy - Cadastros\n\n");
-					printf("\t\t1) Cadastrar Fornecedor\n");
-					printf("\t\t2) Cadastrar Produto\n");
+					printf("\t\t|---------------------------|\n");
+                    printf("\t\t|     EasyBuy - Cadastro    |\n");
+                    printf("\t\t|---------------------------|\n");
+					printf("\t\t| 1) Cadastrar Fornecedor.  |\n");
+					printf("\t\t| 2) Cadastrar Produto.     |\n");
+					printf("\t\t|---------------------------|\n\n");
 					printf("\t\t");
 					scanf("%d",&esc);
 					if(esc == 1){
@@ -79,9 +85,12 @@ int main() {
 				}
 			case 2://Alterar de cliente e produtos
 				{
-					printf("\t\tEasyBuy - Alterações\n\n");
-					printf("\t\t1) Alterar Fornecedor\n");
-					printf("\t\t2) Alterar Produto\n");
+					printf("\t\t|---------------------------|\n");
+                    printf("\t\t|   EasyBuy - Alterações    |\n");
+                    printf("\t\t|---------------------------|\n");
+					printf("\t\t| 1) Alterar Fornecedor.    |\n");
+					printf("\t\t| 2) Alterar Produto.       |\n");
+					printf("\t\t|---------------------------|\n\n");
 					printf("\t\t");
 					scanf("%d",&esc);
 					if(esc == 1){
@@ -95,16 +104,22 @@ int main() {
 				}
 			case 3://Comprar produto
 				{
-					printf("\t\tEasyBuy - Compra\n\n");
+					printf("\t\t|-------------------------------|\n");
+                    printf("\t\t|       EasyBuy - Compra        |\n");
+                    printf("\t\t|-------------------------------|\n");
 					compra();
 					printf("\t\t");
 					break;
 				}
 			case 4://Visualizar produto e fornecedor
 				{
-					printf("\t\tEasyBuy - Listas\n\n");
-					printf("\t\t1) Visualizar fornecedores\n");
-					printf("\t\t2) Visualizar produtos\n\t\t");
+					printf("\t\t|-------------------------------|\n");
+                    printf("\t\t|       EasyBuy - Listas        |\n");
+                    printf("\t\t|-------------------------------|\n");
+					printf("\t\t| 1) Visualizar fornecedores.   |\n");
+					printf("\t\t| 2) Visualizar produtos.       |\n");
+					printf("\t\t|-------------------------------|\n");
+					printf("\t\t");
 					scanf("%d",&esc);
 					if(esc == 1){
 						listaFornecedor();
@@ -119,9 +134,12 @@ int main() {
 				}
 			case 5:
 				{
-					printf("\t\tEasyBuy - Relatório\n\n");
-					printf("\t\t1) Fornecedores ordenados pelo Total de Compras\n");
-					printf("\t\t2) Produto, ordenados pelo Preço Unitário\n");
+					printf("\t\t|---------------------------------|\n");
+                    printf("\t\t|       EasyBuy - Relatórios      |\n");
+                    printf("\t\t|---------------------------------|\n");
+					printf("\t\t| 1) Fornecedores ordenados pelo  |\n\t\t|     Total de Compras.           |\n");
+					printf("\t\t| 2) Produto, ordenados pelo      |\n\t\t|     Preço Unitário.             |\n");
+					printf("\t\t|---------------------------------|\n");
 					printf("\t\t");
 					scanf("%d",&esc);
 					break;
@@ -288,7 +306,8 @@ void compra(){
     Produtos *tempProd;
     int escFor = 0, escProd = 0;
     float escQtde = 0;
-    printf("\n\t\tInforme o codigo do fornecedor\n\t\tpara realizar a compra: ");
+    printf("\t\t  Informe o codigo do fornecedor\n\t\t  para realizar a compra:\n");
+    printf("\t\t");
     scanf("%d",&escFor);
     escFor = somaTotalCompra(escFor);
     visuProdFornec(escFor, escProd, escQtde, 0);
