@@ -36,6 +36,8 @@ void visuProdFornec(int escFor, int escProd, int escQtde, int func);//Func = 1 p
 int  somaTotalCompra(int escFor);
 int  somaQuantidadeComprada(int escFor, int escProd, int escQtde);
 
+//Funções Ordena
+int organizaFornec();
 
 Fornecedores* headFor = NULL;
 Produtos* headProd = NULL;
@@ -142,10 +144,20 @@ int main() {
 					printf("\t\t|---------------------------------|\n");
 					printf("\t\t");
 					scanf("%d",&esc);
-					break;
+					if(esc == 1)
+                    {
+                        system("cls");
+                        organizaFornec();
+                    }
+                    else if(esc == 2)
+                    {
+                        system("cls");
+                    }break;
 				}
 			case 6:
 				{
+					printf("\n\n\t\tObrigado por utilizar o sistema EasyBuy!\n\n\t\t\t\t^-^\n\n");
+					system("pause");
 					exit(0);
 					break;
 				}
@@ -182,6 +194,7 @@ void cadastroForn(){
 		aux->next = temp;
 	}
 	cont++;
+
 	printf("\t\t");
 	system("pause");
 }
@@ -223,7 +236,7 @@ int verificaFornce(int escFornec){
     int saida = 0;
     while(saida != 1){
         for(temp = headFor; temp != NULL ; temp=temp->next){
-            if(escFornec == temp->codFornecedores){
+            if(escFornec = temp->codFornecedores){
                 saida = 1;
             }else{
                 printf("\t\tFornecedor não cadastrado\n\t\tInforme um fornecedor existente: ");
@@ -263,38 +276,56 @@ void listaProduto(){
 
 //Função para alterar fornecedor
 void alterarForn(){
-    int valor;
+    int valor,saida = 0;
     system("cls");
     Fornecedores* temp;
     printf("\t\tDigite o código do fornecedor que deseja alterar: \n");
     scanf ("%d", &valor);
-    for(temp = headFor; temp != NULL ; temp=temp->next){
-        if(temp->codFornecedores == valor){
-            system("cls");
-            printf("\t\tDigite o novo nome do fornecedor: \n");
-            getchar();
-            gets(temp->nomeFornecedores);
-            system("cls");
+    while(saida != 1){
+        for(temp = headFor; temp != NULL ; temp=temp->next){
+            if(temp->codFornecedores == valor){
+                system("cls");
+                printf("\t\tDigite o novo nome do fornecedor: \n");
+                getchar();
+                gets(temp->nomeFornecedores);
+                saida = 1;
+                system("cls");
+
+            }
+            else
+            {
+                printf("\t\tFornecedor inexistente!\n\t\tDigite um fornecedor ja cadastrado:");
+                scanf ("%d", &valor);
+            }
+
         }
     }
 }
 
 //Função para alterar cadastro de produto
 void alterarProd(){
-    int valor;
+    int valor, saida = 0;
     system("cls");
     Produtos* temp;
     printf("\t\tDigite o código do produto que deseja alterar: \n\t\t");
     scanf ("%d", &valor);
-    for(temp = headProd; temp != NULL ; temp=temp->next){
-        if(temp->codProdutos == valor){
-            system("cls");
-            printf("\t\tDigite o novo nome do produto: \n\t\t");
-            getchar();
-            gets(temp->nomeProdutos);
-            printf("\t\tInforme o novo preço unitario do produto: \n\t\t");
-            scanf("%f",&temp->precoUni);
-            system("cls");
+    while(saida != 1){
+        for(temp = headProd; temp != NULL ; temp=temp->next){
+            if(temp->codProdutos == valor){
+                system("cls");
+                printf("\t\tDigite o novo nome do produto: \n\t\t");
+                getchar();
+                gets(temp->nomeProdutos);
+                printf("\t\tInforme o novo preço unitario do produto: \n\t\t");
+                scanf("%f",&temp->precoUni);
+                saida = 1;
+                system("cls");
+            }
+            else
+                {
+                    printf("\t\tProduto inexistente!\n\t\tDigite um produto ja cadastrado:");
+                    scanf ("%d", &valor);
+                }
         }
     }
     system("pause");
@@ -381,6 +412,48 @@ void visuProdFornec(int escFor, int escProd, int escQtde, int func){
     }
 }
 
+//Ordena Froncedores por total de compras
+int organizaFornec()
+{
+    Fornecedores *temp;
+
+
+    int totalFornec = 0, inicio = 0, fim = 0;
+
+
+    for (temp = headFor; temp != NULL; temp = temp->next)
+    {
+        totalFornec = totalFornec + 1;
+        fim = fim + 1;
+    }
+    int vetor[totalFornec];
+
+    int pivo, aux, i, j, meio;
+
+   i = inicio;
+   j = fim;
+
+   meio = (int) ((i + j) / 2);
+   pivo = vetor[meio];
+
+   do{
+      while (vetor[i] < pivo) i = i + 1;
+      while (vetor[j] > pivo) j = j - 1;
+
+      if(i <= j){
+         aux = vetor[i];
+         vetor[i] = vetor[j];
+         vetor[j] = aux;
+         i = i + 1;
+         j = j - 1;
+         printf("Trocou %d por %d \n", vetor[j], vetor[i]);
+      }
+   }while(j > i);
+
+   if(inicio < j) organizaFornec(vetor, inicio, j);
+   if(i < fim) organizaFornec(vetor, i, fim);
+
+}
 
 
 
