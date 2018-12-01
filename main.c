@@ -3,12 +3,15 @@
 #include<conio.h>
 #include<locale.h>
 
+//Usar metodo QuickShort para fazer relatorios.
+
 //Declaração de Struct
 typedef struct Fornecedores{
 	int codFornecedores;
 	char nomeFornecedores[50];
 	int totalCompras;
 	struct Fornecedores* next;
+	int inativo;
 }Fornecedores;
 
 typedef struct Produtos{
@@ -18,6 +21,7 @@ typedef struct Produtos{
 	float precoUni;
 	float qtdComprada;
 	struct Produtos* next;
+	int inativo;
 }Produtos;
 
 //Declaração das funções
@@ -29,6 +33,13 @@ void listaFornecedor();
 void listaProduto();
 void alterarForn();
 void alterarProd();
+
+//Funções de consulta
+int verificaProd();
+
+//Funções Inativar
+void inativaFornec();
+void inativaProd();
 
 //Funções para compras
 void compra();
@@ -43,22 +54,23 @@ Produtos* headProd = NULL;
 int main() {
 	setlocale(LC_ALL,"portuguese");
 
-	struct Fornecedores *forn;
-	struct Produtos *prod;
+//	struct Fornecedores *forn;
+//	struct Produtos *prod;
 
 	int esc = 0;
 
-	while(esc !=5 ){
+	while(esc != 7){
         //Printando o MENU
         printf("\t\t|---------------------------|\n");
         printf("\t\t|   Bem-Vindo ao EasyBuy    |\n");
         printf("\t\t|---------------------------|\n");
 		printf("\t\t| 1) Cadastros.             |\n");
 		printf("\t\t| 2) Alterações.            |\n");
-		printf("\t\t| 3) Comprar.               |\n");
-		printf("\t\t| 4) Visualizar listas.     |\n");
-		printf("\t\t| 5) Relatório.             |\n");
-		printf("\t\t| 6) Sair.                  |\n");
+		printf("\t\t| 3) Inativar cadastro.     |\n");
+		printf("\t\t| 4) Comprar.               |\n");
+		printf("\t\t| 5) Visualizar listas.     |\n");
+		printf("\t\t| 6) Relatório.             |\n");
+		printf("\t\t| 7) Sair.                  |\n");
 		printf("\t\t|---------------------------|\n\n");
 		printf("\t\t");
 		scanf("%d",&esc);
@@ -102,7 +114,26 @@ int main() {
 					}
 					break;
 				}
-			case 3://Comprar produto
+            case 3://Inativação de Produto e Cliente
+                {
+                    printf("\t\t|---------------------------|\n");
+                    printf("\t\t|   EasyBuy - Inativação    |\n");
+                    printf("\t\t|---------------------------|\n");
+					printf("\t\t| 1) Inativar Fornecedor.   |\n");
+					printf("\t\t| 2) Inativar Produto.      |\n");
+					printf("\t\t|---------------------------|\n\n");
+					printf("\t\t");
+					scanf("%d",&esc);
+					if(esc == 1){
+						inativaFornec();
+					}else if(esc == 2){
+						inativaProd();
+					}else{
+						printf("Opção inválida!");
+					}
+                    break;
+                }
+			case 4://Comprar produto
 				{
 					printf("\t\t|-------------------------------|\n");
                     printf("\t\t|       EasyBuy - Compra        |\n");
@@ -111,7 +142,7 @@ int main() {
 					printf("\t\t");
 					break;
 				}
-			case 4://Visualizar produto e fornecedor
+			case 5://Visualizar produto e fornecedor
 				{
 					printf("\t\t|-------------------------------|\n");
                     printf("\t\t|       EasyBuy - Listas        |\n");
@@ -132,7 +163,7 @@ int main() {
 					}
 					break;
 				}
-			case 5:
+			case 6:
 				{
 					printf("\t\t|---------------------------------|\n");
                     printf("\t\t|       EasyBuy - Relatórios      |\n");
@@ -143,9 +174,16 @@ int main() {
 					printf("\t\t");
 					scanf("%d",&esc);
 					break;
+					if(esc == 1)
+                    {
+                        system("cls");
+
+                    }
 				}
-			case 6:
+			case 7:
 				{
+					printf("\n\n\t\tObrigado por utilizar o sistema EasyBuy!\n\n\t\t\t\t^-^\n\n");
+					system("pause");
 					exit(0);
 					break;
 				}
@@ -171,6 +209,7 @@ void cadastroForn(){
 	temp->codFornecedores = cont;
 	printf("\t\tO codigo do fornecedo é: %d\n",temp->codFornecedores);
 	temp->totalCompras = 0;
+	temp->inativo = 0;
 	temp->next = NULL;
 	if(headFor == NULL){
 		headFor = temp;
@@ -198,10 +237,25 @@ void cadastroProd(){
 	gets(temp->nomeProdutos);
 	printf("\t\tInforme o preço unitário: \n\t\t");
 	scanf("%f",&temp->precoUni);
-	printf("\t\tInforme o código do fornecedor desse produto: \n\t\t");
-	scanf("%d",&escFornec);
+	if(headFor == NULL){
+        printf("\t\tNenhum fornecedor cadastrado\n\t\tNecessario fazer cadastro.\n\n\t\tApós o cadastro informar o código do fornecedor.\n\t\t");
+        system("pause");
+        system("cls");
+        printf("\t\t|--------------------------------------|\n");
+        printf("\t\t|     EasyBuy - Cadastro Fornecedor    |\n");
+        printf("\t\t|--------------------------------------|\n");
+        cadastroForn();
+        system("cls");
+        printf("\t\t|--------------------------------|\n");
+        printf("\t\t|   EasyBuy - Cadastro Produto   |\n");
+        printf("\t\t|--------------------------------|\n");
+	}
+	printf("\n\t\tInforme o codigo do fornecedor: ");
+    scanf("%d",&escFornec);
+	escFornec = verificaFornce(escFornec);
 	temp->codFornecedorProd = verificaFornce(escFornec);
 	temp->next = NULL;
+	temp->inativo = 0;
 	if(headProd == NULL){
 		headProd = temp;
 	}else{
@@ -217,23 +271,6 @@ void cadastroProd(){
 	system("pause");
 }
 
-//Procurar se fornecedor existe
-int verificaFornce(int escFornec){
-    Fornecedores *temp;
-    int saida = 0;
-    while(saida != 1){
-        for(temp = headFor; temp != NULL ; temp=temp->next){
-            if(escFornec == temp->codFornecedores){
-                saida = 1;
-            }else{
-                printf("\t\tFornecedor não cadastrado\n\t\tInforme um fornecedor existente: ");
-                scanf("%d",&escFornec);
-            }
-        }
-    }
-    return escFornec;
-}
-
 //Função para visualizar fornecedor
 void listaFornecedor(){
 	system("cls");
@@ -241,6 +278,11 @@ void listaFornecedor(){
     for(temp = headFor; temp != NULL ; temp=temp->next){
         printf("\t\tCod: %d \n",temp->codFornecedores);
         printf("\t\tNome: %s \n",temp->nomeFornecedores);
+        if(temp->inativo == 0){
+            printf("\t\tSituaçaõ: Ativo \n");
+        }else{
+            printf("\t\tSituaçaõ: Inativo \n");
+        }
         printf("\t\tQtde de compras: %d\n",temp->totalCompras);
         printf("\t\t---------------\n");
     }
@@ -256,6 +298,11 @@ void listaProduto(){
         printf("\t\tNome: %s \n",temp->nomeProdutos);
         printf("\t\tPreço: R$%.2f \n",temp->precoUni);
         printf("\t\tQtde comprada: %.2f \n",temp->qtdComprada);
+        if(temp->inativo == 0){
+            printf("\t\tSituaçaõ: Ativo \n");
+        }else{
+            printf("\t\tSituaçaõ: Inativo \n");
+        }
         printf("\t\tCod. do fornecedor: %d \n",temp->codFornecedorProd);
         printf("\t\t-----------------------\n");
     }
@@ -263,40 +310,112 @@ void listaProduto(){
 
 //Função para alterar fornecedor
 void alterarForn(){
-    int valor;
+    int valor,saida = 0;
     system("cls");
     Fornecedores* temp;
     printf("\t\tDigite o código do fornecedor que deseja alterar: \n");
     scanf ("%d", &valor);
-    for(temp = headFor; temp != NULL ; temp=temp->next){
-        if(temp->codFornecedores == valor){
-            system("cls");
-            printf("\t\tDigite o novo nome do fornecedor: \n");
-            getchar();
-            gets(temp->nomeFornecedores);
-            system("cls");
+    while(saida != 1){
+        for(temp = headFor; temp != NULL ; temp=temp->next){
+            if(temp->codFornecedores == valor){
+                system("cls");
+                printf("\t\tDigite o novo nome do fornecedor: \n");
+                getchar();
+                gets(temp->nomeFornecedores);
+                saida = 1;
+                system("cls");
+
+            }
+            else
+            {
+                printf("\t\tFornecedor inexistente!\n\t\tDigite um fornecedor ja cadastrado:");
+                scanf ("%d", &valor);
+            }
+
         }
     }
 }
 
 //Função para alterar cadastro de produto
 void alterarProd(){
-    int valor;
+    int valor, saida = 0;
     system("cls");
     Produtos* temp;
     printf("\t\tDigite o código do produto que deseja alterar: \n\t\t");
     scanf ("%d", &valor);
-    for(temp = headProd; temp != NULL ; temp=temp->next){
-        if(temp->codProdutos == valor){
-            system("cls");
-            printf("\t\tDigite o novo nome do produto: \n\t\t");
-            getchar();
-            gets(temp->nomeProdutos);
-            printf("\t\tInforme o novo preço unitario do produto: \n\t\t");
-            scanf("%f",&temp->precoUni);
-            system("cls");
+    while(saida != 1){
+        for(temp = headProd; temp != NULL ; temp=temp->next){
+            if(temp->codProdutos == valor){
+                system("cls");
+                printf("\t\tDigite o novo nome do produto: \n\t\t");
+                getchar();
+                gets(temp->nomeProdutos);
+                printf("\t\tInforme o novo preço unitario do produto: \n\t\t");
+                scanf("%f",&temp->precoUni);
+                saida = 1;
+                system("cls");
+            }
+            else
+                {
+                    printf("\t\tProduto inexistente!\n\t\tDigite um produto ja cadastrado:");
+                    scanf ("%d", &valor);
+                }
         }
     }
+    system("pause");
+}
+
+//Inativar Fornecedor
+void inativaFornec(){
+    Fornecedores *temp;
+    int saida = 0, esc = 0;
+    int tamLista = 0, cont = 0;
+    printf("\t\tCódigo do fornecedor: ");
+    scanf("%d",&esc);
+    esc = verificaFornce(esc);
+    while(saida != 1){
+        for(temp = headFor; temp != NULL ; temp=temp->next){
+            if(esc == temp->codFornecedores){
+                temp->inativo = 1;
+                saida = 1;
+            }else{
+                cont++;
+            }
+            tamLista++;
+        }
+        if(tamLista == cont){
+            printf("\t\tNenhum fornecedor encotrado\n\t\tInforme outro codigo: ");
+            scanf("%d",&esc);
+        }
+    }
+    printf("\t\tFornecedor inativado\n!");
+    system("pause");
+}
+
+//Inativar Produto
+void inativaProd(){
+    Produtos *temp;
+    int saida = 0, esc = 0;
+    int tamLista = 0, cont = 0;
+    printf("\t\tCódigo do produto: ");
+    scanf("%d",&esc);
+    esc = verificaProd(esc);
+    while(saida != 1){
+        for(temp = headProd; temp != NULL ; temp=temp->next){
+            if(esc == temp->codProdutos){
+                temp->inativo = 1;
+                saida = 1;
+            }else{
+                cont++;
+            }
+            tamLista++;
+        }
+        if(tamLista == cont){
+            printf("\t\tNenhum produto encotrado\n\t\tInforme outro codigo: ");
+            scanf("%d",&esc);
+        }
+    }
+    printf("\t\tProduto inativado!\n");
     system("pause");
 }
 
@@ -382,12 +501,50 @@ void visuProdFornec(int escFor, int escProd, int escQtde, int func){
 }
 
 
+//-----Consultas-----
+//Procurar se fornecedor existe ---- ARRUMAR ---
+int verificaFornce(int escFornec){
+    Fornecedores *temp;
+    int saida = 0;
+    int cont = 0, tamLista = 0;
+    while(saida != 1){
+        for(temp = headFor; temp != NULL ; temp=temp->next){
+            if(escFornec == temp->codFornecedores){
+                saida = 1;
+            }else{
+                cont++;
+            }
+            tamLista++;
+        }
+        if(tamLista == cont){
+            printf("\t\tFornecedor não cadastrado\n\t\tInforme um fornecedor existente: ");
+            scanf("%d",&escFornec);
+        }
+    }
+    return escFornec;
+}
 
-
-
-
-
-
+//Produra se produto existe
+int verificaProd(int escProd){
+   Produtos *temp;
+    int saida = 0;
+    int cont = 0, tamLista = 0;
+    while(saida != 1){
+        for(temp = headProd; temp != NULL ; temp=temp->next){
+            if(escProd == temp->codProdutos){
+                saida = 1;
+            }else{
+                cont++;
+            }
+            tamLista++;
+        }
+        if(tamLista == cont){
+            printf("\t\tProduto não cadastrado\n\t\tInforme um produto existente: ");
+            scanf("%d",&escProd);
+        }
+    }
+    return escProd;
+}
 
 
 
